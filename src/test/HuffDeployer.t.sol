@@ -3,7 +3,7 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "../../lib/ds-test/test.sol";
 import "forge-std/console.sol";
-import "../HuffDeployer.sol";
+import "./utils/HuffDeployer.sol";
 
 interface Number {
     function setNumber(uint256) external;
@@ -18,7 +18,7 @@ contract HuffDeployerTest is DSTest {
 
     function setUp() public {
         ///@notice deploy a new instance of ISimplestore by passing in the address of the deployed Huff contract
-        number = Number(huffDeployer.deploy("test/contracts/Number"));
+        number = Number(huffDeployer.deploy("Number"));
     }
 
     function testSet(uint256 num) public {
