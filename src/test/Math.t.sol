@@ -7,6 +7,7 @@ import "./utils/HuffDeployer.sol";
 
 interface Math {
     function addition(uint256,uint256) external pure returns (uint256);
+    function subtraction(uint256,uint256) external pure returns (uint256);
 }
 
 contract MathTest is DSTest {
@@ -29,6 +30,18 @@ contract MathTest is DSTest {
         unchecked {
             uint256 result = math.addition(a, b);
             assertEq(result, a + b);
+        }
+    }
+
+    function testSubtraction() public {
+        uint256 result = math.subtraction(420, 69);
+        assertEq(result, 351);
+    }
+
+    function testSubtraction(uint256 a, uint256 b) public {
+        unchecked {
+            uint256 result = math.subtraction(a, b);
+            assertEq(result, a - b);
         }
     }
 }
