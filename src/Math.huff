@@ -1,0 +1,20 @@
+// Interface
+#define function addition(uint256,uint256) pure returns (uint256)
+
+// Methods
+#define macro ADDITION() = takes (0) returns (0) {
+    0x04 calldataload   // [num1]
+    0x24 calldataload   // [num2, num1]
+    add                 // [result]
+    0x00 mstore
+    0x20 0x00 return
+}
+
+// Main
+#define macro MAIN() = takes (0) returns (0) {
+    0x00 calldataload 0xE0 shr
+    dup1 0x54f363a3 eq addition jumpi
+
+    addition: 
+        ADDITION()
+}
