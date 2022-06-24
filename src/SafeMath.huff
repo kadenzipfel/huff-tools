@@ -20,14 +20,13 @@
 
 #define macro SAFE_SUB() = takes (2) returns (1) {
     // input stack          // [num1, num2]
-    swap1                   // [num2, num1]
-    dup1                    // [num2, num2, num1]
-    dup3                    // [num1, num2, num2, num1]
-    gt                      // [is_underflow, num2, num1]
-    iszero                  // [is_not_underflow, num2, num1]
-    is_not_underflow jumpi  // [num2, num1]
+    dup1                    // [num1, num1, num2]
+    dup3                    // [num2, num1, num1, num2]
+    gt                      // [is_underflow, num1, num2]
+    iszero                  // [is_not_underflow, num1, num2]
+    is_not_underflow jumpi  // [num1, num2]
         0x00 0x00 revert
-    is_not_underflow:       // [num2, num1]
+    is_not_underflow:       // [num1, num2]
     sub                     // [result]
 }
 
@@ -56,10 +55,9 @@
 
 #define macro SAFE_DIV() = takes (2) returns (1) {
     // input stack          // [num1, num2]
-    swap1                   // [num2, num1]
-    dup2                    // [num1, num2, num1]
-    0x00 swap1              // [num1, 0, num2, num1]
-    gt                      // [not_div_zero, num2, num1]
+    dup2                    // [num2, num1, num2]
+    0x00 swap1              // [num2, 0, num1, num2]
+    gt                      // [not_div_zero, num1, num2]
     not_div_zero jumpi
         0x00 0x00 revert
     not_div_zero:
@@ -78,6 +76,7 @@
 #define macro SAFE_SUB_WRAPPER() = takes (0) returns (0) {
     0x04 calldataload       // [num1]
     0x24 calldataload       // [num2, num1]
+    swap1                   // [num1, num2]
     SAFE_SUB()              // [result]
     0x00 mstore             // []
     0x20 0x00 return        // []
@@ -94,6 +93,7 @@
 #define macro SAFE_DIV_WRAPPER() = takes (0) returns (0) {
     0x04 calldataload       // [num1]
     0x24 calldataload       // [num2, num1]
+    swap1                   // [num1, num2]
     SAFE_DIV()              // [result]
     0x00 mstore             // []
     0x20 0x00 return        // []
