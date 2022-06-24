@@ -28,7 +28,7 @@
     is_not_underflow jumpi  // [num2, num1]
         0x00 0x00 revert
     is_not_underflow:       // [num2, num1]
-        sub                 // [result]
+    sub                     // [result]
 }
 
 #define macro SAFE_MUL() = takes (2) returns (1) {
