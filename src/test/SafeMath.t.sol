@@ -9,6 +9,7 @@ import "./utils/HuffDeployer.sol";
 interface SafeMath {
     function safeAdd(uint256,uint256) external pure returns (uint256);
     function safeSub(uint256,uint256) external pure returns (uint256);
+    function safeMul(uint256,uint256) external pure returns (uint256);
 }
 
 contract MathTest is DSTest {
@@ -58,6 +59,32 @@ contract MathTest is DSTest {
             
             uint256 result = safeMath.safeSub(a, b);
             assertEq(result, a - b);
+        }
+    }
+
+    function testSafeMul() public {
+        uint256 result = safeMath.safeMul(420, 69);
+        assertEq(result, 28980);
+    }
+
+    function testSafeMul(uint256 a, uint256 b) public {
+        unchecked {
+            uint256 result;
+            if (a == 0 || b == 0) {
+                result = safeMath.safeMul(a, b);
+                assertEq(result, 0);
+                return;
+            }
+
+            uint256 c = a * b;
+            if (c / a != b) {
+                vm.expectRevert();
+                safeMath.safeMul(a, b);
+                return;
+            }
+            
+            result = safeMath.safeMul(a, b);
+            assertEq(result, c);
         }
     }
 }
