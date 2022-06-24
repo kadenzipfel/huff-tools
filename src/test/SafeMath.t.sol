@@ -31,15 +31,14 @@ contract MathTest is DSTest {
     function testSafeAdd(uint256 a, uint256 b) public {
         unchecked {
             uint256 c = a + b;
-            uint256 result;
             
             if (a > c) {
                 vm.expectRevert();
-                result = safeMath.safeAdd(a, b);
+                safeMath.safeAdd(a, b);
                 return;
             }
             
-            result = safeMath.safeAdd(a, b);
+            uint256 result = safeMath.safeAdd(a, b);
             assertEq(result, a + b);
         }
     }
