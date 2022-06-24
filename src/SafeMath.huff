@@ -2,6 +2,7 @@
 #define function safeAdd(uint256,uint256) pure returns (uint256)
 #define function safeSub(uint256,uint256) pure returns (uint256)
 #define function safeMul(uint256,uint256) pure returns (uint256)
+#define function safeDiv(uint256,uint256) pure returns (uint256)
 
 // Methods - Use these macros directly
 #define macro SAFE_ADD() = takes (2) returns (1) {
@@ -53,6 +54,18 @@
     is_not_overflow:
 }
 
+#define macro SAFE_DIV() = takes (2) returns (1) {
+    // input stack          // [num1, num2]
+    swap1                   // [num2, num1]
+    dup2                    // [num1, num2, num1]
+    0x00 swap1              // [num1, 0, num2, num1]
+    gt                      // [not_div_zero, num2, num1]
+    not_div_zero jumpi
+        0x00 0x00 revert
+    not_div_zero:
+    div                     // [result]
+}
+
 // Wrapper methods (for testing)
 #define macro SAFE_ADD_WRAPPER() = takes (0) returns (0) {
     0x04 calldataload       // [num1]
@@ -78,12 +91,21 @@
     0x20 0x00 return        // []
 }
 
+#define macro SAFE_DIV_WRAPPER() = takes (0) returns (0) {
+    0x04 calldataload       // [num1]
+    0x24 calldataload       // [num2, num1]
+    SAFE_DIV()              // [result]
+    0x00 mstore             // []
+    0x20 0x00 return        // []
+}
+
 // Main
 #define macro MAIN() = takes (0) returns (0) {
     0x00 calldataload 0xE0 shr
     dup1 0xe6cb9013 eq safeAdd jumpi
     dup1 0xa293d1e8 eq safeSub jumpi
     dup1 0xd05c78da eq safeMul jumpi
+    dup1 0xb5931f7c eq safeDiv jumpi
 
     safeAdd: 
         SAFE_ADD_WRAPPER()
@@ -93,4 +115,7 @@
         
     safeMul: 
         SAFE_MUL_WRAPPER()
+
+    safeDiv:
+        SAFE_DIV_WRAPPER()
 }

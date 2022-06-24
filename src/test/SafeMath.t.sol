@@ -10,6 +10,7 @@ interface SafeMath {
     function safeAdd(uint256,uint256) external pure returns (uint256);
     function safeSub(uint256,uint256) external pure returns (uint256);
     function safeMul(uint256,uint256) external pure returns (uint256);
+    function safeDiv(uint256,uint256) external pure returns (uint256);
 }
 
 contract MathTest is DSTest {
@@ -85,6 +86,24 @@ contract MathTest is DSTest {
             
             result = safeMath.safeMul(a, b);
             assertEq(result, c);
+        }
+    }
+
+    function testSafeDiv() public {
+        uint256 result = safeMath.safeDiv(420, 69);
+        assertEq(result, 6);
+    }
+
+    function testSafeDiv(uint256 a, uint256 b) public {
+        unchecked {
+            if (b == 0) {
+                vm.expectRevert();
+                safeMath.safeDiv(a, b);
+                return;
+            }
+            
+            uint256 result = safeMath.safeDiv(a, b);
+            assertEq(result, a / b);
         }
     }
 }
